@@ -12,22 +12,53 @@
         <script type="text/javascript">
 var canvas;
 var ctx;
-var startingAngle;
-var endingAngle;
 var centerX;
 var centerY;
-var intervalId; 
 var counterclockwise = false;
-var threshold = 130;
-var circle1 = new Circle(300, 700, 230);
-var circle2 = new Circle(20, 400, 230);
+var circle1 = new Circle(300, 700, 230, 130);
+var circle2 = new Circle(20, 400, 270, 40);
+var circle3 = new Circle(10, 200, 270, 40);
+
+function Circle(lineWidth, radius, startingAngle, endingAngle) {
+  this.lineWidth = lineWidth;
+  this.radius = radius;
+  this.startingAngle = startingAngle;
+  this.endingAngle = endingAngle;
+  this.draw = function() {
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, convertDegreesToRadians(startingAngle), convertDegreesToRadians(endingAngle), counterclockwise);
+    ctx.lineWidth = lineWidth;
+    ctx.strokeStyle = "black";
+    ctx.stroke()
+  }
+}
   
 function drawCircle(circle) {
-  ctx.beginPath();
-  ctx.arc(centerX, centerY, circle.radius, convertDegreesToRadians(circle.startingAngle), convertDegreesToRadians(circle.endingAngle), counterclockwise);
-  ctx.lineWidth = circle.lineWidth;
-  ctx.strokeStyle = "black";
-  ctx.stroke()
+  circle.tempAngle=circle.startingAngle;
+  circle.tempStartingAngle = circle.startingAngle;
+  circle.drawTemp = function() {
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, circle.radius, convertDegreesToRadians(circle.tempStartingAngle), convertDegreesToRadians(circle.tempAngle), counterclockwise);
+    ctx.lineWidth = circle.lineWidth;
+    ctx.strokeStyle = "black";
+    ctx.stroke()
+}
+  circle.adjustEndingAngle = function() {
+    console.log("ending angle " + circle.tempAngle);
+    if (circle.tempAngle == circle.endingAngle) {
+       console.log("ending angle has reached threshold");  
+       clearInterval(circle.intervalId);
+  }
+    if (circle.tempAngle == 360) {
+      circle.tempAngle = 0;
+    }
+    circle.tempAngle = circle.tempAngle + 5;
+    console.log(circle.tempAngle);
+    circle.drawTemp();
+    circle.tempStartingAngle = circle.tempStartingAngle + 4.9;  
+}
+  
+  circle.intervalId = setInterval(circle.adjustEndingAngle, 10);
 }
 
 function clear() {
@@ -41,38 +72,19 @@ function init() {
   ctx.canvas.height = window.innerHeight;
   centerX = (canvas.width / 2) - 150;
   centerY = (canvas.height / 2) + 150;
-  intervalId = setInterval(adjustEndingAngle, 10);
-}
-
-function adjustEndingAngle() {
-  console.log("ending angle " + endingAngle);
-  if (endingAngle == threshold) {
-    clearInterval(intervalId);
-    console.log("ending angle has reached threshold");  
-  }
-  if (endingAngle == 360) {
-    endingAngle = 0;
-    }
-  endingAngle = endingAngle + 5;
-  console.log(endingAngle);
   draw();
 }
 
+
 function draw() {
   clear();
-  drawCircle(circle1)
-  drawCircle(circle2)
+  drawCircle(circle1);
+  drawCircle(circle2);
+  circle3.draw();
 }
 
 function convertDegreesToRadians(degree) {
   return (degree * (Math.PI/180));  
-}
-
-function Circle(lineWidth, radius, startingAngle, endingAngle) {
-  this.lineWidth = lineWidth;
-  this.radius = radius;
-  this.startingAngle = startingAngle;
-  this.endingAngle = startingAngle;
 }
 
 init();       
