@@ -2,6 +2,20 @@
 <html>
     <head>
         <title>Daniel Szmulewicz</title>
+    <style type="text/css">
+    .text {
+      position: absolute;  
+  }
+     #text1 {
+      font: 300 120.1% "Helvetica Neue", Helvetica, "Arial Unicode MS", Arial, sans-serif;
+      
+    }
+    #text2 {
+      font: 300 100.1% "Helvetica Neue", Helvetica, "Arial Unicode MS", Arial, sans-serif;
+      
+    }
+</style>
+<script src="http://github.com/cowboy/jquery-throttle-debounce/raw/v1.1/jquery.ba-throttle-debounce.min.js"></script>
     </head>
  
     <body>
@@ -9,15 +23,32 @@
             <!-- Insert fallback content here -->
             Sorry, your browser doesn't support canvas technology
         </canvas>
+        <div class="text" id="text1">
+        Daniel Szmulewicz
+        </div> 
+        <div class="text" id="text2">
+        My belief system
+        </div> 
+        
         <script type="text/javascript">
 var canvas;
 var ctx;
 var centerX;
 var centerY;
 var counterclockwise = false;
-var circle1 = new Circle(300, 700, 230, 130);
-var circle2 = new Circle(20, 400, 270, 40);
-var circle3 = new Circle(10, 200, 270, 40);
+var circles = [
+ new Circle(300, 850, 230, 180),
+ new Circle(220, 585, 310, 160),
+ new Circle(140, 400, 270, 130),
+ new Circle(70, 290, 280, 40),
+ new Circle(70, 290, 80, 150),
+ new Circle(30, 235, 310, 10),
+ new Circle(30, 235, 90, 140),
+ new Circle(10, 210, 320, 40),
+ new Circle(10, 210, 110, 150),
+
+];
+
 
 function Circle(lineWidth, radius, startingAngle, endingAngle) {
   this.lineWidth = lineWidth;
@@ -70,17 +101,24 @@ function init() {
   ctx = canvas.getContext("2d");
   ctx.canvas.width = window.innerWidth;
   ctx.canvas.height = window.innerHeight;
-  centerX = (canvas.width / 2) - 150;
+  centerX = (canvas.width / 2) - 200;
   centerY = (canvas.height / 2) + 150;
+  text1 = document.getElementById("text1");
+  text1.style.top = (centerY-100)+"px";
+  text1.style.left = (centerX-200)+"px" ;
+  text2 = document.getElementById("text2");
+  text2.style.top = centerY+"px";
+  text2.style.left = centerX+"px" ;
+  window.onresize = Cowboy.debounce(1000,init);
   draw();
 }
 
 
 function draw() {
   clear();
-  drawCircle(circle1);
-  drawCircle(circle2);
-  circle3.draw();
+  for (var i = 0; i < circles.length; i++) {
+    drawCircle(circles[i]);    
+  }
 }
 
 function convertDegreesToRadians(degree) {
