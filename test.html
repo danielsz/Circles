@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+   <head>
+       <title>Test</title>
+   </head>
+
+   <body>
+       <canvas id="myCanvas" width="568" height="262">
+           <!-- Insert fallback content here -->
+           Sorry, your browser doesn't support canvas technology
+       </canvas>
+
+       <script type="text/javascript">
+           function init() {
+              (function() {return new Book("Jean Valjean", "La vache qui rit")})().present();  
+              book2 = new Book("Albert Camus", "La peste");  
+              book2.present();
+            }
+
+            function Book(author, title) {
+              this.author = author;
+              this.title = title;
+              var gros = title;
+              this.present = function () {
+                var self = this;
+                show = function() {
+                  console.log(author + title + gros)
+                  console.dir(self)
+                  }  
+                show2 = function() {
+                  console.log(title);
+                  show();
+                }
+                              var intervalId = setInterval(show2, 10);
+    
+              }  
+              }
+              
+           init();       
+
+</script>
+   </body>
+</html>

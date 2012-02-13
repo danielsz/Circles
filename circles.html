@@ -35,7 +35,6 @@ var canvas;
 var ctx;
 var centerX;
 var centerY;
-var counterclockwise = false;
 var circles = [
  new Circle(300, 850, 230, 180),
  new Circle(220, 585, 310, 160),
@@ -46,7 +45,6 @@ var circles = [
  new Circle(30, 235, 90, 140),
  new Circle(10, 210, 320, 40),
  new Circle(10, 210, 110, 150),
-
 ];
 
 
@@ -55,43 +53,41 @@ function Circle(lineWidth, radius, startingAngle, endingAngle) {
   this.radius = radius;
   this.startingAngle = startingAngle;
   this.endingAngle = endingAngle;
-  this.draw = function() {
+  var counterclockwise = false;
+  
+  this.draw = function(startingAngle, endingAngle) {
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, convertDegreesToRadians(startingAngle), convertDegreesToRadians(endingAngle), counterclockwise);
     ctx.lineWidth = lineWidth;
     ctx.strokeStyle = "black";
     ctx.stroke()
   }
-}
   
-function drawCircle(circle) {
-  circle.tempAngle=circle.startingAngle;
-  circle.tempStartingAngle = circle.startingAngle;
-  circle.drawTemp = function() {
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, circle.radius, convertDegreesToRadians(circle.tempStartingAngle), convertDegreesToRadians(circle.tempAngle), counterclockwise);
-    ctx.lineWidth = circle.lineWidth;
-    ctx.strokeStyle = "black";
-    ctx.stroke()
-}
-  circle.adjustEndingAngle = function() {
-    console.log("ending angle " + circle.tempAngle);
-    if (circle.tempAngle == circle.endingAngle) {
-       console.log("ending angle has reached threshold");  
-       clearInterval(circle.intervalId);
+  this.staticDraw = function() {
+    this.draw(startingAngle, endingAngle);  
   }
-    if (circle.tempAngle == 360) {
-      circle.tempAngle = 0;
+    
+  this.animatedDraw = function() {
+    var self = this;
+    var tempAngle = startingAngle;
+    var tempStartingAngle = startingAngle;
+    
+    this.adjustEndingAngle = function() {
+      if (tempAngle == endingAngle) {
+         console.log("ending angle has reached threshold");  
+         clearInterval(intervalId);
+      }
+      if (tempAngle == 360) {
+        tempAngle = 0;
+      }
+      tempAngle = tempAngle + 5;
+      self.draw(tempStartingAngle, tempAngle);
+      tempStartingAngle = tempStartingAngle + 4.9;  
     }
-    circle.tempAngle = circle.tempAngle + 5;
-    console.log(circle.tempAngle);
-    circle.drawTemp();
-    circle.tempStartingAngle = circle.tempStartingAngle + 4.9;  
+    var intervalId = setInterval(this.adjustEndingAngle, 10);
+  }
 }
   
-  circle.intervalId = setInterval(circle.adjustEndingAngle, 10);
-}
-
 function clear() {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 }
@@ -117,8 +113,8 @@ function init() {
 function draw() {
   clear();
   for (var i = 0; i < circles.length; i++) {
-    drawCircle(circles[i]);    
-  }
+    circles[i].animatedDraw();    
+}
 }
 
 function convertDegreesToRadians(degree) {
