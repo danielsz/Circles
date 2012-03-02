@@ -8,11 +8,14 @@
   }
      #text1 {
       font: 300 xx-large "Helvetica Neue", Helvetica, "Arial Unicode MS", Arial, sans-serif;
-      
     }
     #text2 {
       font: 300 xx-small "Helvetica Neue", Helvetica, "Arial Unicode MS", Arial, sans-serif;
       height:125px;width:125px;max-height:125px;overflow:hidden;
+    }
+    a {
+      text-decoration:none;
+      color:black;
     }
 </style>
 <script src="http://github.com/cowboy/jquery-throttle-debounce/raw/v1.1/jquery.ba-throttle-debounce.min.js"></script>
@@ -24,7 +27,7 @@
             Sorry, your browser doesn't support canvas technology
         </canvas>
         <div class="text" id="text1">
-        beethoven
+        <a href="#" onClick="toggle_colors()" id="link">beethoven</a>
         </div> 
         <div class="text" id="text2">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras fermentum ligula et enim pharetra rhoncus. Maecenas pharetra suscipit aliquet. Quisque pharetra aliquet neque, sed varius elit egestas ut. Nam a felis eget erat imperdiet malesuada. Sed ut sagittis sem. Curabitur in tortor lorem. Integer bibendum interdum ligula, in tristique augue sagittis sit amet. Sed malesuada porta imperdiet. Fusce a ligula turpis.
@@ -35,6 +38,7 @@ var canvas;
 var ctx;
 var centerX;
 var centerY;
+var negative = false;
 var circles = [
  new Circle(300, 850, 230, 180),
  new Circle(220, 585, 310, 160),
@@ -59,7 +63,7 @@ function Circle(lineWidth, radius, startingAngle, endingAngle) {
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, convertDegreesToRadians(startingAngle), convertDegreesToRadians(endingAngle), counterclockwise);
     ctx.lineWidth = lineWidth;
-    ctx.strokeStyle = "black";
+    ctx.strokeStyle = negative ? "white" : "black";
     ctx.stroke()
   }
   
@@ -114,11 +118,21 @@ function draw() {
   clear();
   for (var i = 0; i < circles.length; i++) {
     circles[i].animatedDraw();    
-}
+  }
 }
 
 function convertDegreesToRadians(degree) {
   return (degree * (Math.PI/180));  
+}
+
+function toggle_colors() {
+  negative = !negative;
+  document.bgColor = negative ? "#000000" : "#FFFFFF"
+  link = document.getElementById("link");
+  link.style.color= negative ? "white" : "black"
+  text2 = document.getElementById("text2");
+  text2.style.color = negative ? "white" : "black"
+  init();
 }
 
 init();       
