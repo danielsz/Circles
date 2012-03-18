@@ -1,7 +1,7 @@
 README
 
 Click [here](http://danielsz.posterous.com/modernism-and-the-web "Modernism and the Web") for the blog post that explains it all.
-Click [here](http://danielsz.github.com/Circles/, "Circles demo") for the actual demo.
+Click [here](http://danielsz.github.com/Circles/ "Circles demo") for the actual demo.
 
 
 
