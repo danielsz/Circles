@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="no-js">
     <head>
         <title>Daniel Szmulewicz</title>
     <style type="text/css">
@@ -21,15 +21,25 @@
     }
     body {
     background: -webkit-canvas(mybackground);
+    background: -moz-element(#myCanvas);
     }
+    #myCanvas {
+     display:none; 
+} 
 </style>
 <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-throttle-debounce/1.1/jquery.ba-throttle-debounce.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
     </head>
  
     <body>
       <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras fermentum ligula et enim pharetra rhoncus. Maecenas pharetra suscipit aliquet. Quisque pharetra aliquet neque, sed varius elit egestas ut. Nam a felis eget erat imperdiet malesuada. Sed ut sagittis sem. Curabitur in tortor lorem. Integer bibendum interdum ligula, in tristique augue sagittis sit amet. Sed malesuada porta imperdiet. Fusce a ligula turpis.</p>
-        <div class="text" id="text1">
-        <a href="#" onClick="toggle_colors()" id="link">beethoven</a>
+      <canvas id="myCanvas">
+        <!-- Insert fallback content here -->
+        Sorry, your browser doesn't support canvas technology
+      </canvas>
+  
+      <div class="text" id="text1">
+        <span id="link">beethoven</span>
         </div> 
         <div class="text" id="text2">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras fermentum ligula et enim pharetra rhoncus. Maecenas pharetra suscipit aliquet. Quisque pharetra aliquet neque, sed varius elit egestas ut. Nam a felis eget erat imperdiet malesuada. Sed ut sagittis sem. Curabitur in tortor lorem. Integer bibendum interdum ligula, in tristique augue sagittis sit amet. Sed malesuada porta imperdiet. Fusce a ligula turpis.
@@ -40,7 +50,6 @@ var canvas;
 var ctx;
 var centerX;
 var centerY;
-var negative = false;
 var circles = [
  new Circle(300, 850, 230, 180),
  new Circle(220, 585, 310, 160),
@@ -65,7 +74,7 @@ function Circle(lineWidth, radius, startingAngle, endingAngle) {
     ctx.beginPath();
     ctx.arc(centerX, centerY, radius, convertDegreesToRadians(startingAngle), convertDegreesToRadians(endingAngle), counterclockwise);
     ctx.lineWidth = lineWidth;
-    ctx.strokeStyle = negative ? "white" : "red";
+    ctx.strokeStyle = "red";
     ctx.stroke()
   }
   
@@ -99,9 +108,17 @@ function clear() {
 }
 
 function init() {
-  ctx = document.getCSSCanvasContext("2d", "mybackground", window.innerWidth, window.innerHeight);
-  ctx.globalCompositeOperation= "copy";
-  ctx.globalAlpha=0.2;
+   if ( 'getCSSCanvasContext' in document ) { 
+     ctx = document.getCSSCanvasContext("2d", "mybackground", window.innerWidth, window.innerHeight); 
+     ctx.globalCompositeOperation = "copy";	     
+   } else {
+     canvas = document.getElementById("myCanvas");
+     ctx = canvas.getContext('2d');
+     ctx.canvas.width = window.innerWidth;
+     ctx.canvas.height = window.innerHeight;
+     ctx.globalCompositeOperation= "xor";	     
+  }  
+  ctx.globalAlpha=0.05; 
   centerX = (window.innerWidth / 2) - 200;
   centerY = (window.innerHeight / 2) + 150;
   text1 = document.getElementById("text1");
@@ -111,7 +128,7 @@ function init() {
   text2.style.top = centerY+"px";
   text2.style.left = centerX+"px" ;
   window.onresize = Cowboy.debounce(1000,init);
-  draw();
+  draw(); 
 }
 
 
@@ -124,16 +141,6 @@ function draw() {
 
 function convertDegreesToRadians(degree) {
   return (degree * (Math.PI/180));  
-}
-
-function toggle_colors() {
-  negative = !negative;
-  document.bgColor = negative ? "#000000" : "#FFFFFF"
-  link = document.getElementById("link");
-  link.style.color= negative ? "white" : "black"
-  text2 = document.getElementById("text2");
-  text2.style.color = negative ? "white" : "black"
-  init();
 }
 
 init();       
